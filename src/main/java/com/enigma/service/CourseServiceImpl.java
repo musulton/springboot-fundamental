@@ -1,57 +1,59 @@
 package com.enigma.service;
 
+import com.enigma.exception.EntityExistException;
 import com.enigma.exception.NotFoundException;
 import com.enigma.model.Course;
 import com.enigma.repository.CourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Primary
 public class CourseServiceImpl implements CourseService {
-
-    @Value("3")
-    Integer dataLength;
 
     @Autowired
     private CourseRepository courseRepository;
 
     @Override
     public List<Course> list() throws Exception {
-        List<Course> result = courseRepository.getAll();
-        if (result.isEmpty()) {
-            throw new NotFoundException();
-        }
-        return result;
+        List<Course> courses = courseRepository.findAll();
+        return courses;
     }
 
     @Override
-    public Course create(Course course) throws Exception {
-        if (!(courseRepository.getAll().size() < dataLength)) {
-            throw new Exception("Data is full");
+    public Course create(Course course) {
+        try {
+            Course newCourse = courseRepository.save(course);
+            return newCourse;
+        } catch (DataIntegrityViolationException e) {
+            throw new EntityExistException();
         }
-
-        return courseRepository.create(course);
     }
 
     @Override
-    public Course get(String id) throws Exception {
-        Optional<Course> result = courseRepository.findById(id);
-        if(result.isEmpty()) {
-            throw new NotFoundException();
+    public Course get(String id) {
+        Optional<Course> course = courseRepository.findById(id);
+        if (course.isEmpty()) {
+            throw new NotFoundException("Course not found");
         }
-
-        return result.get();
+        return course.get();
     }
 
     @Override
-    public void update(Course course, String id) throws Exception {
+    public void update(Course course, String id) {
         try {
             Course existingCourse = get(id);
-            courseRepository.update(course, existingCourse.getCourseId());
+            course.setCourseId(existingCourse.getCourseId());
+            courseRepository.save(course);
         } catch (NotFoundException e) {
             throw new NotFoundException("Update failed because ID is not found");
         }
@@ -60,19 +62,47 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public void delete(String id) {
         try {
-            Course course = get(id);
-            courseRepository.delete(course.getCourseId());
-        } catch (Exception e) {
+            Course existingCourse = get(id);
+            courseRepository.delete(existingCourse);
+        } catch (NotFoundException e) {
             throw new NotFoundException("Delete failed because ID is not found");
         }
     }
 
-    @Override
-    public List<Course> getBy(String keyword, String value) throws Exception {
-        Optional<List<Course>> result = courseRepository.findBy(keyword, value);
-        if (result.isEmpty()) {
-            throw new NotFoundException("Course not found");
+    List<Course> findByTitleContains(String value) {
+        List<Course> courses = courseRepository.findByTitleContains(value);
+        if (courses.isEmpty()) {
+            throw new NotFoundException("Course with " + value + " title is not found");
         }
-        return result.get();
+
+        return courses;
+    }
+
+    List<Course> findByDescriptionContains(String value) {
+        List<Course> courses = courseRepository.findByDescriptionContains(value);
+        if (courses.isEmpty()) {
+            throw new NotFoundException("Course with " + value + " description is not found");
+        }
+
+        return courses;
+    }
+
+    public List<Course> getBy(String key, String val) {
+        switch (key) {
+            case "title":
+                return findByTitleContains(val);
+            case "description":
+                return findByDescriptionContains(val);
+            default:
+                return courseRepository.findAll();
+        }
+    }
+
+    @Override
+    public Page<Course> list(Integer page, Integer size, String direction, String sortBy) throws Exception {
+        Sort sort = Sort.by(Sort.Direction.valueOf(direction), sortBy);
+        Pageable pageable = PageRequest.of((page - 1), size, sort);
+        Page<Course> result = courseRepository.findAll(pageable);
+        return result;
     }
 }

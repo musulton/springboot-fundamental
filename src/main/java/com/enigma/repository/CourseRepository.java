@@ -1,15 +1,16 @@
 package com.enigma.repository;
 
 import com.enigma.model.Course;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface CourseRepository {
-    List<Course> getAll() throws Exception;
-    Course create(Course course) throws Exception;
-    Optional<Course> findById(String id) throws Exception;
-    void update(Course course, String id) throws Exception;
-    void delete(String id) throws Exception;
-    Optional<List<Course>> findBy(String key, String value);
+public interface CourseRepository extends JpaRepository<Course, String> {
+
+    @Query("SELECT c FROM Course c WHERE c.title LIKE %?1%")
+    List<Course> findByTitleContains(String title);
+
+    @Query("SELECT c FROM Course c WHERE c.description LIKE %?1%")
+    List<Course> findByDescriptionContains(String description);
 }

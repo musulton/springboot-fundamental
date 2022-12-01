@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class CourseRepositoryImpl implements CourseRepository {
+public class CourseArrayRepositoryImpl implements CourseArrayRepository {
 
     @Autowired
     RandomStringGenerator randomStringGenerator;

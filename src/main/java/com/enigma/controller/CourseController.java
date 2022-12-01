@@ -2,17 +2,19 @@ package com.enigma.controller;
 
 import com.enigma.model.Course;
 import com.enigma.model.request.CourseRequest;
+import com.enigma.model.response.PagingResponse;
 import com.enigma.model.response.SuccessResponse;
 import com.enigma.service.CourseService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
@@ -27,9 +29,14 @@ public class CourseController {
     private CourseService courseService;
 
     @GetMapping
-    public ResponseEntity getAllCourse() throws Exception {
-        List<Course> courses = courseService.list();
-        return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse<>("Success Get All Course", courses));
+    public ResponseEntity getAllCourse(
+            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(defaultValue = "5") Integer size,
+            @RequestParam(defaultValue = "DESC") String direction,
+            @RequestParam(defaultValue = "courseId") String sortBy
+    ) throws Exception {
+        Page<Course> courses = courseService.list(page, size, direction, sortBy);
+        return ResponseEntity.status(HttpStatus.OK).body(new PagingResponse<>("Success get course list", courses));
     }
 
     @PostMapping
@@ -57,4 +64,21 @@ public class CourseController {
         courseService.update(course, id);
         return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse<>("Success update course", course));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteById(@PathVariable("id") String id) throws Exception {
+        courseService.delete(id);
+        return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse<>("Success delete course", null));
+    }
+
+//    @GetMapping(params = {"pageSize", "page", "sortBy", "direction"})
+//    public ResponseEntity findWithPagination(
+//            @RequestParam(defaultValue = "5") @Min(1) Integer pageSize,
+//            @RequestParam(defaultValue = "1") @Min(1) Integer page,
+//            @RequestParam(defaultValue = "courseId") String sortBy,
+//            @RequestParam(defaultValue = "DESC") String direction
+//            ) throws Exception {
+//        List<Course> courses = courseService.findWithPagination(pageSize, page, sortBy, direction);
+//        return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse<>("Success get course", courses));
+//    }
 }
