@@ -6,6 +6,7 @@ import com.enigma.model.response.PagingResponse;
 import com.enigma.model.response.SuccessResponse;
 import com.enigma.service.CourseService;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,7 @@ public class CourseController {
 
     @PostMapping
     public ResponseEntity createCourse(@Valid @RequestBody CourseRequest course) throws Exception {
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         Course newCourse = modelMapper.map(course, Course.class);
         Course result = courseService.create(newCourse);
         return ResponseEntity.status(HttpStatus.CREATED).body(new SuccessResponse<>("Success create course", result));
@@ -70,15 +72,4 @@ public class CourseController {
         courseService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse<>("Success delete course", null));
     }
-
-//    @GetMapping(params = {"pageSize", "page", "sortBy", "direction"})
-//    public ResponseEntity findWithPagination(
-//            @RequestParam(defaultValue = "5") @Min(1) Integer pageSize,
-//            @RequestParam(defaultValue = "1") @Min(1) Integer page,
-//            @RequestParam(defaultValue = "courseId") String sortBy,
-//            @RequestParam(defaultValue = "DESC") String direction
-//            ) throws Exception {
-//        List<Course> courses = courseService.findWithPagination(pageSize, page, sortBy, direction);
-//        return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse<>("Success get course", courses));
-//    }
 }

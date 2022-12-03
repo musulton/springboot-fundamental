@@ -3,9 +3,11 @@ package com.enigma.service;
 import com.enigma.exception.EntityExistException;
 import com.enigma.exception.NotFoundException;
 import com.enigma.model.Course;
+import com.enigma.model.CourseType;
 import com.enigma.repository.CourseRepository;
+import com.enigma.repository.CourseTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,14 +19,17 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Primary
+@Profile("api")
 public class CourseServiceImpl implements CourseService {
 
     @Autowired
     private CourseRepository courseRepository;
 
+    @Autowired
+    private CourseTypeRepository courseTypeRepository;
+
     @Override
-    public List<Course> list() throws Exception {
+    public List<Course> list() {
         List<Course> courses = courseRepository.findAll();
         return courses;
     }
@@ -32,6 +37,13 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public Course create(Course course) {
         try {
+            Optional<CourseType> courseType = courseTypeRepository.findById(course.getCourseType().getCourseTypeId());
+
+            if (courseType.isEmpty()) {
+                throw new NotFoundException("Course type is not found");
+            }
+
+            course.setCourseType(courseType.get());
             Course newCourse = courseRepository.save(course);
             return newCourse;
         } catch (DataIntegrityViolationException e) {
@@ -99,7 +111,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Page<Course> list(Integer page, Integer size, String direction, String sortBy) throws Exception {
+    public Page<Course> list(Integer page, Integer size, String direction, String sortBy) {
         Sort sort = Sort.by(Sort.Direction.valueOf(direction), sortBy);
         Pageable pageable = PageRequest.of((page - 1), size, sort);
         Page<Course> result = courseRepository.findAll(pageable);
