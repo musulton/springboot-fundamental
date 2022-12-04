@@ -4,7 +4,9 @@ import com.enigma.model.Course;
 import com.enigma.model.request.CourseRequest;
 import com.enigma.model.response.PagingResponse;
 import com.enigma.model.response.SuccessResponse;
+import com.enigma.repository.spec.SearchCriteria;
 import com.enigma.service.CourseService;
+import com.enigma.util.QueryOperator;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
@@ -38,6 +39,16 @@ public class CourseController {
     ) throws Exception {
         Page<Course> courses = courseService.list(page, size, direction, sortBy);
         return ResponseEntity.status(HttpStatus.OK).body(new PagingResponse<>("Success get course list", courses));
+    }
+
+    @GetMapping(params = {"key", "value", "operator"})
+    public ResponseEntity getAllBy(@RequestParam("key") String key, @RequestParam("value") String value, @RequestParam("operator") String operator) {
+        SearchCriteria searchCriteria = new SearchCriteria()
+                .setKey(key)
+                .setValue(value)
+                .setOperator(QueryOperator.valueOf(operator));
+        List<Course> courses = courseService.list(searchCriteria);
+        return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse<>("Success get all course by", courses));
     }
 
     @PostMapping

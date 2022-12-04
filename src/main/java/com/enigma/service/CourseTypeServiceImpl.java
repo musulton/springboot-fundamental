@@ -3,6 +3,9 @@ package com.enigma.service;
 import com.enigma.exception.EntityExistException;
 import com.enigma.model.CourseType;
 import com.enigma.repository.CourseTypeRepository;
+import com.enigma.repository.spec.SearchCriteria;
+import com.enigma.repository.spec.Spec;
+import com.enigma.util.QueryOperator;
 import com.enigma.util.RandomStringGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -11,16 +14,23 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Profile("api")
 public class CourseTypeServiceImpl implements CourseTypeService {
     @Autowired
-    CourseTypeRepository courseTypeRepository;
+    RandomStringGenerator randomStringGenerator;
 
     @Autowired
-    RandomStringGenerator randomStringGenerator;
+    CourseTypeRepository courseTypeRepository;
+
+//    public CourseTypeServiceImpl(@Autowired CourseTypeRepository courseTypeRepository) {
+//        this.courseTypeRepository = courseTypeRepository;
+//    }
 
     @Override
     public Page<CourseType> list(Integer page, Integer size, String sortBy, String direction) {
@@ -39,5 +49,16 @@ public class CourseTypeServiceImpl implements CourseTypeService {
         } catch (DataIntegrityViolationException e) {
             throw new EntityExistException();
         }
+    }
+
+    @Override
+    public List<CourseType> findAllByName(String value) {
+        SearchCriteria searchCriteria = new SearchCriteria()
+                .setOperator(QueryOperator.LIKE)
+                .setKey("typeName")
+                .setValue(value);
+        Specification spec = new Spec<CourseType>().findBy(searchCriteria);
+        List<CourseType> courseTypes = courseTypeRepository.findAll(spec);
+        return courseTypes;
     }
 }

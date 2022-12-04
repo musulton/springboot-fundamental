@@ -1,6 +1,7 @@
 package com.enigma.service;
 
 import com.enigma.model.Course;
+import com.enigma.repository.spec.SearchCriteria;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -15,4 +16,6 @@ public interface CourseService {
     List<Course> getBy(String keyword, String value) throws Exception;
 
     Page<Course> list(Integer page, Integer size, String direction, String sortBy) throws Exception;
+
+    List<Course> list(SearchCriteria searchCriteria);
 }

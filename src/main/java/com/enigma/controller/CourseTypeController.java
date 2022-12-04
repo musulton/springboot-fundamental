@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/course-types")
@@ -32,6 +33,12 @@ public class CourseTypeController {
     ) {
         Page<CourseType> result = courseTypeService.list(page, size, sortBy, direction);
         return ResponseEntity.status(HttpStatus.OK).body(new PagingResponse<>("Success get all course type", result));
+    }
+
+    @GetMapping(params = {"typeName"})
+     ResponseEntity getAllByName(@Valid @RequestParam("typeName") String name) {
+        List<CourseType> courseTypeList = courseTypeService.findAllByName(name);
+        return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse<>("Success get all by name", courseTypeList));
     }
 
     @PostMapping

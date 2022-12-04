@@ -6,6 +6,8 @@ import com.enigma.model.Course;
 import com.enigma.model.CourseType;
 import com.enigma.repository.CourseRepository;
 import com.enigma.repository.CourseTypeRepository;
+import com.enigma.repository.spec.SearchCriteria;
+import com.enigma.repository.spec.Spec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -116,5 +119,12 @@ public class CourseServiceImpl implements CourseService {
         Pageable pageable = PageRequest.of((page - 1), size, sort);
         Page<Course> result = courseRepository.findAll(pageable);
         return result;
+    }
+
+    @Override
+    public List<Course> list(SearchCriteria searchCriteria) {
+        Specification spec = new Spec<Course>().findBy(searchCriteria);
+        List<Course> courses = courseRepository.findAll(spec);
+        return courses;
     }
 }
