@@ -3,11 +3,14 @@ package com.enigma.service;
 import com.enigma.exception.EntityExistException;
 import com.enigma.exception.NotFoundException;
 import com.enigma.model.Course;
+import com.enigma.model.CourseInfo;
 import com.enigma.model.CourseType;
+import com.enigma.model.request.CourseRequest;
 import com.enigma.repository.CourseRepository;
 import com.enigma.repository.CourseTypeRepository;
 import com.enigma.repository.spec.SearchCriteria;
 import com.enigma.repository.spec.Spec;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -25,11 +28,18 @@ import java.util.Optional;
 @Profile("api")
 public class CourseServiceImpl implements CourseService {
 
-    @Autowired
     private CourseRepository courseRepository;
 
-    @Autowired
     private CourseTypeRepository courseTypeRepository;
+
+    private CourseUploadService courseUploadService;
+
+    @Autowired
+    public CourseServiceImpl(CourseRepository courseRepository, CourseTypeRepository courseTypeRepository, CourseUploadService courseUploadService) {
+        this.courseRepository = courseRepository;
+        this.courseTypeRepository = courseTypeRepository;
+        this.courseUploadService = courseUploadService;
+    }
 
     @Override
     public List<Course> list() {
@@ -38,17 +48,29 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Course create(Course course) {
+    public Course create(CourseRequest courseRequest) {
         try {
-            Optional<CourseType> courseType = courseTypeRepository.findById(course.getCourseType().getCourseTypeId());
+            String filePath = "";
+            Optional<CourseType> courseType = courseTypeRepository.findById(courseRequest.getCourseTypeId());
 
             if (courseType.isEmpty()) {
                 throw new NotFoundException("Course type is not found");
             }
 
-            course.setCourseType(courseType.get());
-            Course newCourse = courseRepository.save(course);
-            return newCourse;
+            if (!courseRequest.getFile().isEmpty()) {
+                filePath = courseUploadService.uploadMaterial(courseRequest.getFile());
+            }
+
+            CourseInfo courseInfo = new CourseInfo()
+                    .setDuration(courseRequest.getDuration())
+                    .setLevel(courseRequest.getLevel());
+            Course course = new Course()
+                    .setTitle(courseRequest.getTitle())
+                    .setDescription(courseRequest.getDescription())
+                    .setLink(filePath)
+                    .setCourseType(courseType.get())
+                    .setCourseInfo(courseInfo);
+            return courseRepository.save(course);
         } catch (DataIntegrityViolationException e) {
             throw new EntityExistException();
         }

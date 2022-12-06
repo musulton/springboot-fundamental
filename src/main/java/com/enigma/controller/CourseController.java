@@ -7,6 +7,7 @@ import com.enigma.model.response.SuccessResponse;
 import com.enigma.repository.spec.SearchCriteria;
 import com.enigma.service.CourseService;
 import com.enigma.util.QueryOperator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,12 +53,26 @@ public class CourseController {
     }
 
     @PostMapping
-    public ResponseEntity createCourse(@Valid @RequestBody CourseRequest course) throws Exception {
+    public ResponseEntity createCourse(@Valid CourseRequest course) throws Exception {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        Course newCourse = modelMapper.map(course, Course.class);
-        Course result = courseService.create(newCourse);
+        Course result = courseService.create(course);
         return ResponseEntity.status(HttpStatus.CREATED).body(new SuccessResponse<>("Success create course", result));
     }
+
+//    @PostMapping
+//    public ResponseEntity createCourse(@Valid NewCourseRequest courseRequest) throws Exception {
+//        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+//
+//        CourseInfoRequest courseInfoRequest = objectMapper.convertValue(courseRequest.getCourseInfo(), CourseInfoRequest.class);
+//        CourseTypeIdRequest courseTypeIdRequest = objectMapper.convertValue(courseRequest.getCourseType(), CourseTypeIdRequest.class);
+//
+//        CourseRequest newCourseRequest = modelMapper.map(courseRequest, CourseRequest.class);
+//        newCourseRequest.setCourseInfo(courseInfoRequest);
+//        newCourseRequest.setCourseType(courseTypeIdRequest);
+//
+//        Course result = courseService.create(newCourseRequest);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(new SuccessResponse<>("Success create course", result));
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity getById(@PathVariable("id") String id) throws Exception {

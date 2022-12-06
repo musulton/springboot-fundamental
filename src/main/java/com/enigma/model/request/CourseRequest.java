@@ -1,5 +1,7 @@
 package com.enigma.model.request;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.validation.constraints.*;
 
 public class CourseRequest {
@@ -9,25 +11,16 @@ public class CourseRequest {
 
     private String description;
 
-    @NotBlank(message = "{invalid.link.required}")
-    private String link;
+    private MultipartFile file;
 
-    @NotNull(message = "{invalid.coursetype.required}")
-    private CourseTypeIdRequest courseType;
+    @NotBlank(message = "Type is required")
+    private String courseTypeId;
 
-    @NotNull(message = "{invalid.courseinfo.required}")
-    private CourseInfoRequest courseInfo;
+    @NotBlank(message = "Duration is required")
+    private String duration;
 
-    @Override
-    public String toString() {
-        return "CourseRequest{" +
-                "title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", link='" + link + '\'' +
-                ", courseType=" + courseType +
-                ", courseInfo=" + courseInfo +
-                '}';
-    }
+    @NotBlank(message = "Level is required")
+    private String level;
 
     public String getTitle() {
         return title;
@@ -45,27 +38,35 @@ public class CourseRequest {
         this.description = description;
     }
 
-    public String getLink() {
-        return link;
+    public MultipartFile getFile() {
+        return file;
     }
 
-    public void setLink(String link) {
-        this.link = link;
+    public void setFile(MultipartFile file) {
+        this.file = file;
     }
 
-    public CourseTypeIdRequest getCourseType() {
-        return courseType;
+    public String getCourseTypeId() {
+        return courseTypeId;
     }
 
-    public void setCourseType(CourseTypeIdRequest courseType) {
-        this.courseType = courseType;
+    public void setCourseTypeId(String courseTypeId) {
+        this.courseTypeId = courseTypeId;
     }
 
-    public CourseInfoRequest getCourseInfo() {
-        return courseInfo;
+    public String getDuration() {
+        return duration;
     }
 
-    public void setCourseInfo(CourseInfoRequest courseInfo) {
-        this.courseInfo = courseInfo;
+    public void setDuration(String duration) {
+        this.duration = duration;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
     }
 }

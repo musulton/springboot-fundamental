@@ -32,23 +32,26 @@ public class CourseInfo {
         return courseInfoId;
     }
 
-    public void setCourseInfoId(String courseInfoId) {
+    public CourseInfo setCourseInfoId(String courseInfoId) {
         this.courseInfoId = courseInfoId;
+        return this;
     }
 
     public String getDuration() {
         return duration;
     }
 
-    public void setDuration(String duration) {
+    public CourseInfo setDuration(String duration) {
         this.duration = duration;
+        return this;
     }
 
     public String getLevel() {
         return level;
     }
 
-    public void setLevel(String level) {
+    public CourseInfo setLevel(String level) {
         this.level = level;
+        return this;
     }
 }

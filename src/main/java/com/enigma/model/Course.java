@@ -5,7 +5,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "mst_course")
+@Table(name = "m_course")
 public class Course {
 
     @Id
@@ -34,48 +34,54 @@ public class Course {
         return courseInfo;
     }
 
-    public void setCourseInfo(CourseInfo courseInfo) {
+    public Course setCourseInfo(CourseInfo courseInfo) {
         this.courseInfo = courseInfo;
+        return this;
     }
 
     public CourseType getCourseType() {
         return courseType;
     }
 
-    public void setCourseType(CourseType courseType) {
+    public Course setCourseType(CourseType courseType) {
         this.courseType = courseType;
+        return this;
     }
 
     public String getCourseId() {
         return courseId;
     }
 
-    public void setCourseId(String courseId) {
+    public Course setCourseId(String courseId) {
         this.courseId = courseId;
+        return this;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    public Course setTitle(String title) {
         this.title = title;
+        return this;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    public Course setDescription(String description) {
         this.description = description;
+        return this;
     }
 
     public String getLink() {
         return link;
     }
 
-    public void setLink(String link) {
+    public Course setLink(String link) {
         this.link = link;
+        return this;
     }
 
     @Override
