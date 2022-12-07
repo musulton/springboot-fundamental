@@ -3,6 +3,7 @@ package com.enigma.controller;
 import com.enigma.model.request.FormDataWithFile;
 import com.enigma.model.response.SuccessResponse;
 import com.enigma.service.CourseUploadService;
+import com.enigma.util.UrlMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -16,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/course-files")
+@RequestMapping(UrlMapping.COURSE_FILES)
 public class CourseUploadController {
     private CourseUploadService courseUploadService;
 
@@ -38,7 +39,7 @@ public class CourseUploadController {
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
-    @GetMapping("/images/{name}")
+    @GetMapping(UrlMapping.COURSE_FILES_IMAGE)
     public ResponseEntity show(@PathVariable("name") String filename) throws IOException {
         Resource file = courseUploadService.downloadMaterial(filename);
         byte[] imageBytes = StreamUtils.copyToByteArray(file.getInputStream());

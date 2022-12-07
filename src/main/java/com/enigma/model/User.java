@@ -1,114 +1,36 @@
 package com.enigma.model;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "m_user")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Column(name = "name", nullable = false)
     private String name;
-    private String username;
-    private String email;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "email", referencedColumnName = "email")
+    private Auth auth;
+    @Column(name = "phone", nullable = false)
     private String phone;
+    @Column(name = "address")
+    private String address;
+    @Column(name = "website", nullable = false)
     private String website;
 
-    static class Company {
-        private String name;
-        private String catchPhrase;
-        private String bs;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getCatchPhrase() {
-            return catchPhrase;
-        }
-
-        public void setCatchPhrase(String catchPhrase) {
-            this.catchPhrase = catchPhrase;
-        }
-
-        public String getBs() {
-            return bs;
-        }
-
-        public void setBs(String bs) {
-            this.bs = bs;
-        }
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", auth=" + auth +
+                ", phone='" + phone + '\'' +
+                ", address='" + address + '\'' +
+                ", website='" + website + '\'' +
+                '}';
     }
-
-    static class Address {
-        private String street;
-        private String suite;
-        private String city;
-        private String zipcode;
-        private Geolocation geo;
-
-        static class Geolocation {
-            private String lat;
-            private String lng;
-
-            public String getLat() {
-                return lat;
-            }
-
-            public void setLat(String lat) {
-                this.lat = lat;
-            }
-
-            public String getLng() {
-                return lng;
-            }
-
-            public void setLng(String lng) {
-                this.lng = lng;
-            }
-        }
-
-        public String getStreet() {
-            return street;
-        }
-
-        public void setStreet(String street) {
-            this.street = street;
-        }
-
-        public String getSuite() {
-            return suite;
-        }
-
-        public void setSuite(String suite) {
-            this.suite = suite;
-        }
-
-        public String getCity() {
-            return city;
-        }
-
-        public void setCity(String city) {
-            this.city = city;
-        }
-
-        public String getZipcode() {
-            return zipcode;
-        }
-
-        public void setZipcode(String zipcode) {
-            this.zipcode = zipcode;
-        }
-
-        public Geolocation getGeo() {
-            return geo;
-        }
-
-        public void setGeo(Geolocation geo) {
-            this.geo = geo;
-        }
-    }
-
-    private Address address;
-    private Company company;
 
     public Integer getId() {
         return id;
@@ -126,20 +48,12 @@ public class User {
         this.name = name;
     }
 
-    public String getUsername() {
-        return username;
+    public Auth getAuth() {
+        return auth;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setAuth(Auth auth) {
+        this.auth = auth;
     }
 
     public String getPhone() {
@@ -150,27 +64,19 @@ public class User {
         this.phone = phone;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public String getWebsite() {
         return website;
     }
 
     public void setWebsite(String website) {
         this.website = website;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
-    public Company getCompany() {
-        return company;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
     }
 }

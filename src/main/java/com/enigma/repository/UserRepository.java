@@ -1,13 +1,7 @@
 package com.enigma.repository;
 
 import com.enigma.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository {
-    User[] getAll();
-
-    User getById(String id);
-
-    void delete(String id);
-
-    void updateById(User user);
+public interface UserRepository extends JpaRepository<User, String> {
 }

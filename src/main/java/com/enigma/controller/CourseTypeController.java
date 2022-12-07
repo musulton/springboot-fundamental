@@ -5,6 +5,7 @@ import com.enigma.model.request.CourseTypeRequest;
 import com.enigma.model.response.PagingResponse;
 import com.enigma.model.response.SuccessResponse;
 import com.enigma.service.CourseTypeService;
+import com.enigma.util.UrlMapping;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,7 +17,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/course-types")
+@RequestMapping(UrlMapping.COURSE_TYPES)
 public class CourseTypeController {
     @Autowired
     CourseTypeService courseTypeService;

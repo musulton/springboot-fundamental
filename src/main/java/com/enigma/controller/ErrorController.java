@@ -3,6 +3,7 @@ package com.enigma.controller;
 import com.enigma.exception.EntityExistException;
 import com.enigma.exception.NotFoundException;
 import com.enigma.exception.RestTemplateException;
+import com.enigma.exception.UnauthorizedException;
 import com.enigma.model.response.ErrorResponse;
 import org.hibernate.action.internal.EntityActionVetoException;
 import org.springframework.http.HttpStatus;
@@ -46,5 +47,10 @@ public class ErrorController {
             errors.add(error.getDefaultMessage());
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("X02", errors.toString()));
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedException exception) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("X99", exception.getMessage()));
     }
 }

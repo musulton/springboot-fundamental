@@ -3,13 +3,17 @@ package com.enigma.controller;
 import com.enigma.model.User;
 import com.enigma.model.response.SuccessResponse;
 import com.enigma.service.UserService;
+import com.enigma.util.UrlMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
+
 @RestController
-@RequestMapping("/users")
+@RequestMapping(UrlMapping.USERS)
 public class UserController {
     private UserService userService;
 
@@ -19,13 +23,13 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity getUsers() {
-        User[] users = userService.findAll();
+        List<User> users = userService.findAll();
         return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse<>("Success get all user", users));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity getUserById(@PathVariable("id") String id) {
-        User user = userService.findById(id);
+        Optional<User> user = userService.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse<>("Success get by id", user));
     }
 
