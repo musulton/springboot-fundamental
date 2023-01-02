@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Profile("api")
 public class CourseServiceImpl implements CourseService {
 
     private CourseRepository courseRepository;
@@ -86,11 +85,18 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public void update(Course course, String id) {
+    public void update(CourseRequest courseRequest, String id) {
         try {
             Course existingCourse = get(id);
-            course.setCourseId(existingCourse.getCourseId());
-            courseRepository.save(course);
+            existingCourse.setTitle(courseRequest.getTitle());
+            existingCourse.setDescription(courseRequest.getDescription());
+
+            CourseInfo courseInfo = new CourseInfo()
+                    .setDuration(courseRequest.getDuration())
+                    .setLevel(courseRequest.getLevel());
+            existingCourse.setCourseInfo(courseInfo);
+
+            courseRepository.save(existingCourse);
         } catch (NotFoundException e) {
             throw new NotFoundException("Update failed because ID is not found");
         }

@@ -22,6 +22,7 @@ public class MyHeaderInterceptor implements HandlerInterceptor {
             return true;
         }
         String token = request.getHeader("Authorization");
+        System.out.println("TOKEN " + token);
         if (token == null) throw new UnauthorizedException();
         String[] bearerToken = token.split(" ");
         return jwtUtil.validateJwtToken(bearerToken[1]);

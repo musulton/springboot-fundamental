@@ -74,9 +74,8 @@ public class CourseController {
 
     @PutMapping("/{id}")
     public ResponseEntity updateById(@Valid @RequestBody CourseRequest courseRequest, @PathVariable("id") String id) throws Exception {
-        Course course = modelMapper.map(courseRequest, Course.class);
-        courseService.update(course, id);
-        return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse<>("Success update course", course));
+        courseService.update(courseRequest, id);
+        return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse<>("Success update course", courseRequest));
     }
 
     @DeleteMapping("/{id}")

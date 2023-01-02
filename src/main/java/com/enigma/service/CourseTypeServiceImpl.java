@@ -20,17 +20,15 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@Profile("api")
 public class CourseTypeServiceImpl implements CourseTypeService {
     @Autowired
     RandomStringGenerator randomStringGenerator;
 
-    @Autowired
     CourseTypeRepository courseTypeRepository;
 
-//    public CourseTypeServiceImpl(@Autowired CourseTypeRepository courseTypeRepository) {
-//        this.courseTypeRepository = courseTypeRepository;
-//    }
+    public CourseTypeServiceImpl(@Autowired CourseTypeRepository courseTypeRepository) {
+        this.courseTypeRepository = courseTypeRepository;
+    }
 
     @Override
     public Page<CourseType> list(Integer page, Integer size, String sortBy, String direction) {

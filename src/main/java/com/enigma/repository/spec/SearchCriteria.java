@@ -7,6 +7,15 @@ public class SearchCriteria {
     private QueryOperator operator;
     private String value;
 
+    public SearchCriteria() {
+    }
+
+    public SearchCriteria(String key, QueryOperator operator, String value) {
+        this.key = key;
+        this.operator = operator;
+        this.value = value;
+    }
+
     public String getKey() {
         return key;
     }

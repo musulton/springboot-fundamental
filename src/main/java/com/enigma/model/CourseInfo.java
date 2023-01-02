@@ -5,7 +5,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "mst_course_info")
+@Table(name = "m_course_info")
 public class CourseInfo {
     @Id
     @GeneratedValue(generator = "system-uuid")
